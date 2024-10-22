@@ -51,6 +51,18 @@ describe ConnectFour do
         subject.turn(player1)
       end
     end
+    context "when the grid isn't full and update_grid returns true" do
+      before do
+        allow(subject).to receive(:user_input).and_return(2)
+        allow(subject).to receive(:puts)
+        allow(subject).to receive(:update_grid?).and_return(true)
+        allow(subject.board).to receive(:display_grid)
+      end
+      it "invokes user_input just once" do
+        expect(subject).to receive(:user_input).once
+        subject.turn(player1)
+      end
+    end
     context "when the grid is full and update_grid returns false" do
       before do
         allow(subject).to receive(:user_input).and_return(2)
@@ -120,4 +132,6 @@ describe ConnectFour do
       end
     end
   end
+
+  describe "start_game"
 end

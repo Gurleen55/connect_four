@@ -9,9 +9,6 @@ class ConnectFour
     @player1 = player1
     @player2 = player2
     @board = board
-  end
-
-  def grid_initialzation
     @board.make_grid
     @board.assign_grid
   end
@@ -50,4 +47,10 @@ class ConnectFour
     end
     puts "lane full, please try different lane"
   end
+
+  # def start_game
+  #   number_of_turns = board.grid.flatten.size
+  #   number_of_turns.times do |i|
+  #   end
+  # end
 end
