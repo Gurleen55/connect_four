@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'grid'
 require_relative 'player'
 
@@ -29,8 +31,8 @@ class ConnectFour
 
   def turn(player)
     loop do
-      input = user_input(player)
-      break if update_grid?(input - 1, player)
+      @input = user_input(player) - 1
+      break if update_grid?(@input, player)
     end
     @board.display_grid
   end
@@ -56,13 +58,66 @@ class ConnectFour
     end
   end
 
-  def identify_cell(input, grid)
+  def selected_column_cell_index(input, grid)
     column = grid[input]
-    column.each do |cell|
-      return cell unless cell == ' '
+    column.each_with_index do |cell, index|
+      return index unless cell == ' '
     end
   end
-  # def check_winner?
 
+  # def check_winner?
   # end
+
+  def vertical_check?(input, grid, player)
+    cell_index = selected_column_cell_index(input, grid)
+    3.times do |i|
+      return false unless grid[input][cell_index + i + 1] == player.symbol
+    end
+    true
+  end
+
+  def horizontal_check?(input, grid, player) # rubocop:disable Metrics/MethodLength
+    cell_index = selected_column_cell_index(input, grid)
+    consecutive_symbol_counter = 0
+    grid.transpose[0].size.times do |i|
+      if grid[i][cell_index] == player.symbol
+        consecutive_symbol_counter += 1
+        return true if consecutive_symbol_counter == 4
+      else
+        consecutive_symbol_counter = 0
+      end
+    end
+    false
+  end
+
+  def diagonal_check?(input, grid, player)
+    cell_index = selected_column_cell_index(input, grid)
+    consecutive_symbol_counter = 0
+    7.times do |i|
+      row = input + 3 - i
+      column = cell_index - 3 + i
+      if row.between?(0, grid.size - 1) && column.between?(0, grid[0].size - 1)
+        if grid[row][column] == player.symbol
+          consecutive_symbol_counter += 1
+          return true if consecutive_symbol_counter == 4
+        else
+          consecutive_symbol_counter = 0
+        end
+      end
+    end
+    consecutive_symbol_counter = 0
+    7.times do |i|
+      row = input - 3 + i
+      column = cell_index - 3 + i
+      if row.between?(0, grid.size - 1) && column.between?(0, grid[0].size - 1)
+        if grid[row][column] == player.symbol
+          consecutive_symbol_counter += 1
+          return true if consecutive_symbol_counter == 4
+        else
+          consecutive_symbol_counter = 0
+        end
+      end
+    end
+    false
+  end
 end

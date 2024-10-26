@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../lib/connect_four'
 
 describe ConnectFour do
@@ -141,15 +143,103 @@ describe ConnectFour do
   #   end
   # end
 
-  describe '#identify_cell' do
+  describe '#slected_column_cell_index' do
     let(:board) { double('Board', grid: [Array.new(8), [' ', ' ', ' ', ' ', ' ', ' ', 'X', 'X']]) }
     before do
       allow(subject).to receive(:user_input).and_return(1)
       subject.board = board.grid
     end
     it 'returns the cell selected by user via column selection' do
-      cell = subject.identify_cell(subject.user_input(player1), board.grid)
-      expect(cell).to equal(board.grid[1][6])
+      cell_index = subject.selected_column_cell_index(subject.user_input(player1), board.grid)
+      expect(cell_index).to eql(6)
+    end
+  end
+
+  describe '#vertical_check?' do
+    context 'when either of the player connects four vertically' do
+      it 'returns true' do
+        input = 0
+        grid = [[' ', ' ', ' ', ' ', 'X', 'X', 'X', 'X']]
+        expect(subject.vertical_check?(input, grid, player1)).to be true
+      end
+    end
+
+    context "when connect four doesen't happen" do
+      it 'returns false' do
+        input = 0
+        grid = [[' ', ' ', ' ', ' ', 'X', 'O', 'X', 'X']]
+        expect(subject.vertical_check?(input, grid, player1)).to be false
+      end
+    end
+  end
+
+  describe '#horizontal_check?' do
+    context 'when one of the players connects horizonatlly' do
+      it 'returns true' do
+        input = 2
+        grid = [[' ', ' ', ' ', ' ', ' ', ' ', ' ', 'X'],
+                [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'X'],
+                [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'X'],
+                [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'X'],
+                [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'X'],
+                Array.new(8, ' '), Array.new(8, ' ')]
+        expect(subject.horizontal_check?(input, grid, player1)).to be true
+      end
+    end
+    context 'when the players do not connect horizonatlly' do
+      it 'returns false' do
+        input = 3
+        grid = [[' ', ' ', ' ', ' ', ' ', ' ', ' ', 'X'],
+                [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'X'],
+                [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'X'],
+                [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'X'],
+                Array.new(8, ' '), Array.new(8, ' ')]
+        expect(subject.horizontal_check?(input, grid, player1)).to be false
+      end
+    end
+  end
+
+  describe '#diagonal_check?' do
+    context 'when one of the players connect diagonally upwards' do
+      it 'returns true' do
+        input = 4
+        grid = [[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                [' ', ' ', ' ', ' ', ' ', 'X', ' ', ' '],
+                [' ', ' ', ' ', ' ', 'X', ' ', ' ', 'X'],
+                [' ', ' ', ' ', 'X', ' ', ' ', ' ', 'X'],
+                [' ', ' ', 'X', ' ', ' ', ' ', ' ', 'X']]
+        expect(subject.diagonal_check?(input, grid, player1)).to be true
+      end
+    end
+
+    context 'when one of the players connect diagonally downwards' do
+      it 'returns true' do
+        input = 2
+        grid = [[' ', ' ', ' ', 'X', ' ', ' ', ' ', ' '],
+                [' ', ' ', ' ', ' ', 'X', ' ', ' ', ' '],
+                [' ', ' ', ' ', ' ', ' ', 'X', ' ', ' '],
+                [' ', ' ', ' ', ' ', ' ', ' ', 'X', 'X'],
+                [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'X'],
+                [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'X']]
+        expect(subject.diagonal_check?(input, grid, player1)).to be true
+      end
+    end
+
+    context 'when the players do not connect diagonally' do
+      it 'returns false' do
+        input = 2
+        grid = [[' ', ' ', ' ', 'X', ' ', ' ', ' ', ' '],
+                [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                [' ', ' ', ' ', ' ', ' ', 'X', ' ', ' '],
+                [' ', ' ', ' ', ' ', ' ', ' ', 'X', 'X'],
+                [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'X'],
+                [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'X']]
+        expect(subject.diagonal_check?(input, grid, player1)).to be false
+      end
     end
   end
 end
