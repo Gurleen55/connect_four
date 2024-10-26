@@ -55,6 +55,10 @@ class ConnectFour
     number_of_turns.times do |i|
       player = i.even? ? @player1 : @player2
       turn(player)
+      if check_winner?(@input, board.grid, player)
+        puts "#{player.name} wins"
+        return
+      end
     end
   end
 
@@ -65,8 +69,12 @@ class ConnectFour
     end
   end
 
-  # def check_winner?
-  # end
+  def check_winner?(input, grid, player)
+    return true if vertical_check?(input, grid, player)
+    return true if horizontal_check?(input, grid, player)
+
+    diagonal_check?(input, grid, player)
+  end
 
   def vertical_check?(input, grid, player)
     cell_index = selected_column_cell_index(input, grid)
@@ -92,22 +100,14 @@ class ConnectFour
 
   def diagonal_check?(input, grid, player)
     cell_index = selected_column_cell_index(input, grid)
+
+    check_diagonal(input, cell_index, grid, player, 1) || check_diagonal(input, cell_index, grid, player, -1)
+  end
+
+  def check_diagonal(input, cell_index, grid, player, direction)
     consecutive_symbol_counter = 0
     7.times do |i|
-      row = input + 3 - i
-      column = cell_index - 3 + i
-      if row.between?(0, grid.size - 1) && column.between?(0, grid[0].size - 1)
-        if grid[row][column] == player.symbol
-          consecutive_symbol_counter += 1
-          return true if consecutive_symbol_counter == 4
-        else
-          consecutive_symbol_counter = 0
-        end
-      end
-    end
-    consecutive_symbol_counter = 0
-    7.times do |i|
-      row = input - 3 + i
+      row = input + (3 - i) * direction
       column = cell_index - 3 + i
       if row.between?(0, grid.size - 1) && column.between?(0, grid[0].size - 1)
         if grid[row][column] == player.symbol

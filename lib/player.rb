@@ -2,8 +2,12 @@
 class Player
   attr_reader :name, :symbol
 
-  def initialize(name, symbol)
-    @name = name
+  @@player_number = 1
+
+  def initialize(symbol)
+    puts "player #{@@player_number}, choose your name"
+    @name = gets.chomp
     @symbol = symbol
+    @@player_number += 1
   end
 end

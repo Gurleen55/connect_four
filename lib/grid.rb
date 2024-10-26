@@ -7,7 +7,7 @@ class Grid
   end
 
   def make_grid
-    Array.new(10) { Array.new(8, " ") }
+    Array.new(10) { Array.new(8, ' ') }
   end
 
   def assign_grid
@@ -15,8 +15,9 @@ class Grid
   end
 
   def display_grid
+    puts [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].join('|')
     @grid.transpose.each do |row|
-      puts row.join("|")
+      puts row.join('|')
     end
   end
 end
